@@ -13,7 +13,7 @@
             <% include ./partials/header %>
 
             <h1><%= title %></h1>
-            <div>
+            <div class="french-movies">
                
                  <% for(movie of movies) {%>
 
@@ -22,10 +22,56 @@
                  <%} %>
             </div>
 
+            <br/>
+            <div>
+                <form action="/movies" method="POST">
+                    <label for = "movietitle">Titre du film</label>
+                    <input type="text" name="movietitle" id= "movietitle">
+                    <label for = "movieyear">Année du film</label>
+                    <input type="text" name="movieyear" id="movieyear">
+                    <button type ="submit">Ajouter</button>
+                </form>
+
+            </div>
+
 
     </div>
 
     <% include ./partials/footer %>
+
+<script>
+        const form = document.querySelector('form');
+       form.addEventListener('submit', addMovie);
+
+       function addMovie(event) {
+       event.preventDefault();
+        
+
+        if(fetch) {
+        fetch('/movies', {
+            method: 'POST',
+            body: new FormData(form)
+        })
+        .then(checkStatus)
+        .catch(function(error) {
+                console.error('request failed', error);
+                })
+            } else {
+            //jquerry, XHR
+            }
+        }
+        
+        function checkStatus(response) {
+             if(response.status >= 200 && response.status < 300) {
+                let newMovieDiv = document.createElement('div');
+                const movietitle = document.getElementById('movietitle').value;
+                const movieyear= document.getElementById('movieyear').value;
+                newMovieDiv.innerHTML = `${movietitle} (${movieyear})`;
+                document.querySelector('.french-movies').appendChild(newMovieDiv);
+                form.reset();
+            }
+         }
+ </script>
 
 </body>
 </html>

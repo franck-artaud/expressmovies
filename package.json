@@ -11,8 +11,12 @@
   "author": "Francky",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
+    "jsonwebtoken": "^8.5.0",
+    "multer": "^1.4.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"
