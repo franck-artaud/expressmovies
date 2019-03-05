@@ -5,7 +5,36 @@ const multer = require('multer');
 const upload = multer();
 const jwt = require('jsonwebtoken');
 const expressJwt = require('express-jwt')
+const faker = require('faker');
 
+const config = require('./config');
+console.log(config);
+const mongoose = require('mongoose');
+
+
+mongoose.connect(`mongodb+srv://${config.db.user}:${config.db.password}@cluster0-1tudq.mongodb.net/expressmovie`, { useNewUrlParser: true })
+    .then(() => console.log("Database OK"))
+    .catch(err => console.log(err))
+
+const movieSchema = mongoose.Schema({
+    movietitle:String,
+    movieyear:Number
+});
+
+const Movie = mongoose.model('Movie', movieSchema)
+const title = faker.lorem.sentence(4);
+const year = Math.floor(Math.random() * 80) + 1950;
+
+const myMovie = new Movie( {movietitle:title, movieyear:year});
+
+myMovie.save((err, savedMovie) => {
+    if(err) {
+    console.error(err);
+    } else {
+        console.log('saveMovie', savedMovie);
+    }
+
+});
 
 const PORT = 5000;
 let frenchMovies = [];
@@ -29,15 +58,22 @@ app.get('/movies', (req, res) => {
 
   const title= 'Les films français des 30 dernières années';
 
- frenchMovies = [
-      { title: 'Le fabuleux destin d\'Amélie Poulain', year:'2001'},
-      { title: 'Buffet froid', year:'1979'},
-      { title: 'Le diner de con ', year:'1978'},
-      { title: 'De rouille et d\'os', year:'2012'}
-  ];
+ frenchMovies = [];
+ Movie.find((err, movies) => {
+     if(err) {
+         console.error('could not retrieve movies from DB');
+         console.sendStatus(500)
+     } else {
+         frenchMovies = movies;
+         res.render('movies', {movies:frenchMovies, title:title});
+     }
+ });
 
+app.put('/movies/:id', (req,res) => {
+    const id = req.params.id;
+    res.send(`PUT resquest to movie of id ${id}`);
+});
   //res.send('Bientôt des films ici');
-  res.render('movies', {movies:frenchMovies, title:title});
 });
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -123,7 +159,7 @@ app.post('/login' , urlencodedParser, (req,res) => {
 });
 
 
-app.get('/member-only', (req,res,) => {
+app.get('/member-only', (req, res,) => {
     console.log('req.user', req.user);
     res.send(req.user);
 });

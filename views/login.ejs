@@ -141,14 +141,14 @@
 				var config = {};
 
 				if(tokenFromStorage) {
-				config.headers = {'Authorization':'Bearer' + JSON.parse(tokenFromStorage)}
+				config.headers = {'Authorization':'Bearer ' + JSON.parse(tokenFromStorage)}
 				}
 
 
 				axios.get(
 					'http://localhost:5000/' + page,
 					config
-				) .then(res => {
+				).then(res => {
 					console.log('success');
 					console.log(res);
 				}).catch(err => {
